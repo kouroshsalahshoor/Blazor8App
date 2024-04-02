@@ -22,5 +22,7 @@ namespace Shared.Dtos.Auth
         public string? FirstName { get; set; }
         [Required]
         public string? LastName { get; set; }
+        [Required]
+        public string? Role { get; set; }
     }
 }
