@@ -1,0 +1,125 @@
+﻿@page "/register"
+
+<EditForm Model="_model" OnValidSubmit="validSubmit" class="pt-4">
+    <DataAnnotationsValidator />
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-lg-6 col-md-12 offset-lg-3 offset-md-0">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-success text-center py-2">
+                            <strong>Register</strong>
+                        </h3>
+                        @if (_errors.Any())
+                        {
+                            <div>
+                                @foreach (var error in _errors)
+                                {
+                                    <p class="text-danger text-center">@error</p>
+                                }
+                            </div>
+                        }
+
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.UserName" id="userName" class="form-control" placeholder="UserName..." />
+                            <ValidationMessage For="(()=>_model.UserName)" />
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.Email" class="form-control" placeholder="Email..." />
+                            <ValidationMessage For="(()=>_model.Email)" />
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.PhoneNumber" class="form-control" placeholder="PhoneNumber..." />
+                            <ValidationMessage For="(()=>_model.PhoneNumber)" />
+                        </div>
+                        @* <div class="py-2 input-group">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text"> +1</span>
+                        </div>
+                        <InputText @bind-Value="_model.PhoneNumber" class="form-control" placeholder="Phone number..." />
+                        <ValidationMessage For="(()=>_model.PhoneNumber)" />
+                        </div> *@
+                        <div class="form-row py-2">
+                            <div class="col">
+                                <InputText @bind-Value="_model.Password" type="password" id="password" placeholder="Password..." class="form-control" />
+                                <ValidationMessage For="(()=>_model.Password)" />
+                            </div>
+                            <div class="col py-2">
+                                <InputText @bind-Value="_model.ConfirmPassword" type="password" id="confirm" class="form-control" placeholder="Confirm Password..." />
+                                <ValidationMessage For="(()=>_model.ConfirmPassword)" />
+                            </div>
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.FirstName" class="form-control" placeholder="FirstName..." />
+                            <ValidationMessage For="(()=>_model.FirstName)" />
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.LastName" class="form-control" placeholder="LastName..." />
+                            <ValidationMessage For="(()=>_model.LastName)" />
+                        </div>
+                        <div class="py-2">
+                            <InputSelect @bind-Value="_model.Role" class="form-select">
+                                <option>Please select a role</option>
+                                <option checked="@(_model.Role == Constants.Role_User)" value="@Constants.Role_User">
+                                    @Constants.Role_User
+                                </option>
+                                <option checked="@(_model.Role == Constants.Role_Admin)" value="@Constants.Role_Admin">
+                                    @Constants.Role_Admin
+                                </option>
+                            </InputSelect>
+                            <ValidationMessage For="(()=>_model.Role)" />
+                        </div>
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            <button type="submit" class="btn btn-success btn-block" disabled="@_loading">
+                                <i class="bi bi-person-plus-fill"></i>
+                                @if (_loading)
+                                {
+                                    <span class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+                                }
+                                Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private RegisterRequestDto _model = new();
+    public bool _loading { get; set; } = false;
+    public List<string> _errors { get; set; } = new();
+
+    [Inject]
+    public IAuthenticationService? _authSerivce { get; set; }
+    [Inject]
+    public NavigationManager? _navigationManager { get; set; }
+
+    private async Task validSubmit()
+    {
+        _loading = true;
+        _errors.Clear();
+
+        try
+        {
+            var result = await _authSerivce!.Register(_model);
+
+            if (result.IsSuccessful)
+            {
+                _navigationManager!.NavigateTo("/login");
+            }
+            else
+            {
+                _errors.AddRange(result.Errors.ToList());
+            }
+        }
+        catch (Exception ex)
+        {
+            _errors.Add(ex.Message);
+        }
+
+        _loading = false;
+    }
+}

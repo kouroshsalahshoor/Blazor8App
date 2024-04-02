@@ -1,7 +1,7 @@
 using AuthApi.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shared;
+using Shared.Auth;
 using Shared.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +27,19 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
 var iConfigurationSection = builder.Configuration.GetSection("JwtOptions");
 builder.Services.Configure<JwtOptions>(iConfigurationSection);
 
+var _allowSpecificOrigins = "allowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(_allowSpecificOrigins,
+                          policy =>
+                          {
+                              policy.WithOrigins("https://localhost:7030",
+                                                  "http://www.contoso.com")
+                                                  .AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                          });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(_allowSpecificOrigins);
 
 app.UseAuthorization();
 

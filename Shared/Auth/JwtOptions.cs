@@ -1,4 +1,4 @@
-﻿namespace Shared
+﻿namespace Shared.Auth
 {
     public class JwtOptions
     {

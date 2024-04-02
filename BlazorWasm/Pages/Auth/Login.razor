@@ -1,0 +1,90 @@
+﻿@page "/login"
+
+<EditForm Model="_model" OnValidSubmit="onValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-6 offset-3 ">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-success text-center py-2">
+                            <strong>Login</strong>
+                        </h3>
+
+                        @if (string.IsNullOrEmpty(_errorMessage) == false)
+                        {
+                            <p class="text-center text-danger">@_errorMessage</p>
+                        }
+
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.UserName" id="userName" placeholder="UserName..." class="form-control mb-2" />
+                            <ValidationMessage For="(()=>_model.UserName)"></ValidationMessage>
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="_model.Password" type="password" placeholder="Password..." id="password" class="form-control mb-2" />
+                            <ValidationMessage For="(()=>_model.Password)"></ValidationMessage>
+                        </div>
+                        <div class="py-2">
+                            <button type="submit" class="btn btn-success btn-block" disabled="@_loading">
+                                <i class="bi bi-person-bounding-box"></i>
+                                @if (_loading)
+                                {
+                                    <span class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+                                }
+                                Sign in
+                            </button>
+                            <a href="/registration" class="btn btn-primary text-white m-2"><i class="bi bi-person-plus-fill"></i> Register</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Inject]
+    public IAuthenticationService? _authSerivce { get; set; }
+    [Inject]
+    public NavigationManager? _navigationManager { get; set; }
+
+    private LoginRequestDto _model = new();
+    public bool _loading { get; set; } = false;
+    public string? _errorMessage { get; set; }
+    public string? _returnUrl { get; set; }
+
+    private async Task onValidSubmit()
+    {
+        _loading = true;
+        _errorMessage = string.Empty;
+
+        try
+        {
+            var result = await _authSerivce!.Login(_model);
+            if (result.IsSuccessful)
+            {
+                var absoluteUri = new Uri(_navigationManager!.Uri);
+                var queryParam = HttpUtility.ParseQueryString(absoluteUri.Query);
+                _returnUrl = queryParam["returnUrl"];
+                if (string.IsNullOrEmpty(_returnUrl))
+                {
+                    _navigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    _navigationManager.NavigateTo("/" + _returnUrl);
+                }
+            }
+            else
+            {
+                _errorMessage = result.ErrorMessage;
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+
+        _loading = false;
+    }
+}

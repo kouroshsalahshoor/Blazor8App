@@ -1,21 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Dtos.Auth;
-using Shared.Dtos;
-using Shared.Models.Auth;
-using Shared;
-using Swashbuckle.AspNetCore.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Claims;
+using Shared;
+using Shared.Auth;
+using Shared.Dtos;
+using Shared.Dtos.Auth;
+using Shared.Models.Auth;
+using Swashbuckle.AspNetCore.Annotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AuthApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController(
         UserManager<ApplicationUser> _userManager,
