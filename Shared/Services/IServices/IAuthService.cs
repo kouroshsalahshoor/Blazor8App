@@ -1,9 +1,9 @@
 ﻿using Shared.Dtos;
 using Shared.Dtos.Auth;
 
-namespace BlazorWasm.Services.IServices
+namespace Shared.Services.IServices
 {
-    public interface IAuthenticationService
+    public interface IAuthService
     {
         Task<ResponseDto> Register(RegisterRequestDto dto);
         Task<LoginResponseDto> Login(LoginRequestDto dto);

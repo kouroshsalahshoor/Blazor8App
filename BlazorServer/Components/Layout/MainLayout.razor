@@ -8,6 +8,19 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+
+            <CascadingAuthenticationState>
+                <AuthorizeView>
+                    <Authorized>
+                        <span class="mx-3">Welcome @context.User.Identity!.Name</span>
+                        <a href="logout" class="mx-3">logout</a>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="login" class="mx-3">Login</a>
+                        <a href="register" class="mx-3">Register</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
         </div>
 
         <article class="content px-4">

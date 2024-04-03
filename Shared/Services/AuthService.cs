@@ -1,4 +1,4 @@
-﻿using BlazorWasm.Services.IServices;
+﻿using Shared.Services.IServices;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
@@ -8,9 +8,9 @@ using Shared.Dtos.Auth;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace BlazorWasm.Services
+namespace Shared.Services
 {
-    public class AuthenticationService(HttpClient _httpClient, IJSRuntime _js, AuthenticationStateProvider _authStateProvider) : IAuthenticationService
+    public class AuthService(HttpClient _httpClient, IJSRuntime _js, AuthenticationStateProvider _authStateProvider) : IAuthService
     {
         public async Task<ResponseDto> Register(RegisterRequestDto dto)
         {

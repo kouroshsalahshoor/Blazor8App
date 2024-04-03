@@ -1,10 +1,19 @@
 using BlazorServer.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Shared.Services;
+using Shared.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7264/api/auth/") });
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
